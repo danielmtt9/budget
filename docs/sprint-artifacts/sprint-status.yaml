@@ -1,0 +1,29 @@
+# generated: 2025-12-06
+# project: budget
+# project_key: budget
+# tracking_system: file-system
+# story_location: docs/sprint-artifacts
+
+generated: 2025-12-06
+project: budget
+project_key: budget
+tracking_system: file-system
+story_location: docs/sprint-artifacts
+
+development_status:
+  epic-1: done
+  1-1-database-schema-for-tags: done
+  1-2-tag-management-api-crud: done
+  1-3-taginput-component: done
+  epic-1-retrospective: optional
+
+  epic-2: done
+  2-1-backend-transaction-update-logic: done
+  2-2-frontend-transaction-edit-integration: done
+  2-3-display-tags-in-transaction-list: done
+  epic-2-retrospective: optional
+
+  epic-3: done
+  3-1-tag-filter-component: done
+  3-2-filter-bar-integration: done
+  epic-3-retrospective: optional
