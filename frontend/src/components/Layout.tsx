@@ -11,8 +11,12 @@ const Layout = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link as={Link} to="/">Dashboard</Nav.Link>
-              <Nav.Link as={Link} to="/transactions">Transactions</Nav.Link>
-              <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
+                <SideNavLink to="/transactions" icon="receipt_long" label="Transactions" />
+                <SideNavLink to="/settings" icon="settings" label="Settings" />
+                <SideNavLink to="/profile" icon="person" label="Profile" />
+            </div>
+            
+            <div className="flex flex-col gap-1">
             </Nav>
             <Nav>
               <Nav.Link as={Link} to="/login">Login</Nav.Link>

@@ -31,9 +31,24 @@
 - **Dependencies:** Epic 1.
 
 ### Epic 3: Filtering & Discovery
-- **Goal:** Enable users to filter the transaction list by tags.
-- **User Value:** Users can find specific groups of transactions (e.g., "Vacation").
-- **Dependencies:** Epic 2.
+
+-   **Goal:** Enable users to filter the transaction list by tags.
+
+-   **User Value:** Users can find specific groups of transactions (e.g., "Vacation").
+
+-   **Dependencies:** Epic 2.
+
+
+
+### Epic 4: Bank Synchronization (SimpleFIN)
+
+-   **Goal:** Automate the import of bank accounts and transactions.
+
+-   **User Value:** Removes manual data entry; keeps financial data current.
+
+-   **Dependencies:** Epic 1 (Basic Schema).
+
+
 
 ## Epic 1: Tagging Foundation & Management
 **Goal:** Establish database schema, API endpoints for tags, and the core TagInput component.
@@ -117,6 +132,45 @@
     - Ensure backend supports filtering by tag IDs (verify/implement logic).
     - Add "Clear All" functionality to reset tag filters.
 - **Technical Context:** Arch 6, Filter Logic.
+
+## Epic 4: Bank Synchronization (SimpleFIN)
+**Goal:** Automate the import of bank accounts and transactions.
+
+### Story 4.1: SimpleFIN Service Implementation
+-   **User Story:** As a system, I need a service to communicate with SimpleFIN Bridge so that I can claim tokens and fetch data.
+-   **Acceptance Criteria:**
+    -   Implement `claim_access_url` (decodes token, POSTs to claim).
+    -   Implement `fetch_financial_data` (GETs accounts/transactions, handles Basic Auth).
+    -   Handle 403 Forbidden (Token Expired) and Rate Limit errors.
+-   **Technical Context:** `app/services/simplefin.py`.
+
+### Story 4.2: Setup API & Persistence
+-   **User Story:** As a user, I want to link my bank account by pasting a token so that the app remembers my connection.
+-   **Acceptance Criteria:**
+    -   `POST /sync/setup` endpoint accepting `setup_token`.
+    -   Calls service to claim Access URL.
+    -   Saves `simplefin_access_url` to `users` table.
+    -   Returns success/failure message.
+-   **Technical Context:** `app/routers/sync.py`, `User` model.
+
+### Story 4.3: Sync Execution & Deduplication
+-   **User Story:** As a user, I want my data to sync without duplicates so that my balance is accurate.
+-   **Acceptance Criteria:**
+    -   `POST /sync/run` endpoint.
+    -   Fetches accounts and transactions.
+    -   Creates new `Account` records if `simplefin_id` doesn't exist.
+    -   Creates new `Transaction` records if `simplefin_id` doesn't exist.
+    -   Updates balances.
+-   **Technical Context:** `app/services/simplefin.py` (sync logic).
+
+### Story 4.4: Frontend Setup UI
+-   **User Story:** As a user, I want a settings form to paste my token so I can start the sync process.
+-   **Acceptance Criteria:**
+    -   Add "Bank Sync" section to Settings page.
+    -   Input field for token. "Connect" button.
+    -   Show loading state while claiming.
+    -   Show success/error toast.
+-   **Technical Context:** `frontend/src/pages/Settings.tsx`.
 
 ## FR Coverage Matrix
 | FR ID | Covered By |

@@ -20,5 +20,6 @@ Personal Finance Tracker using SimpleFin Bridge for automated transaction syncin
 
 ## Documentation Index
 -   [Data Models](./data-models.md)
+-   [SimpleFIN Integration PRD](./prd-simplefin-integration.md)
 -   [Backend Architecture](./architecture-finance-app.md) _(To be generated)_
 -   [Frontend Architecture](./architecture-frontend.md) _(To be generated)_
