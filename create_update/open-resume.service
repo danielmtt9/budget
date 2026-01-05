@@ -1,0 +1,21 @@
+[Unit]
+Description=Open-Resume Application
+After=network.target
+
+[Service]
+Type=simple
+User=danielaroko
+WorkingDirectory=/home/danielaroko/applications/open-resume
+Environment="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin"
+Environment="NODE_ENV=production"
+Environment="PORT=50002"
+Environment="HOSTNAME=0.0.0.0"
+ExecStart=/usr/bin/node .next/standalone/server.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=open-resume
+
+[Install]
+WantedBy=multi-user.target

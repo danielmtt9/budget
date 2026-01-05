@@ -2,12 +2,15 @@ import { test, expect, APIResponse } from '@playwright/test';
 import { createUser } from '../support/factories/user.factory';
 
 test.describe('API Tag Management', () => {
+  test.use({ baseURL: 'http://localhost:8002' });
   let user: { email: string, password: string };
   let createdTagId: number;
 
-  test.beforeEach(async () => {
+  test.beforeEach(async ({ request }) => {
     // Ensure a user exists for each test context
     user = await createUser();
+    // Login to set session cookie in the request context
+    await request.get(`/dev/login?email=${user.email}`);
   });
 
   test('[P0] should create a tag', async ({ request }) => {
@@ -24,20 +27,17 @@ test.describe('API Tag Management', () => {
   });
 
   test('[P0] should get all tags', async ({ request }) => {
-    // First, create a tag if not already done by beforeEach (should be there)
-    // For isolated tests, each should create its own dependencies.
-    // For simplicity, relying on beforeEach
+    // Create a tag first
+    const tagName = `TagForList_${Date.now()}`;
+    await request.post('/tags/', { data: { name: tagName } });
+
     const response = await request.get('/tags/');
     expect(response.status()).toBe(200);
     const tags = await response.json();
     expect(Array.isArray(tags)).toBe(true);
-    // Find the tag created by beforeEach or a previous test
-    const testTag = tags.find((t: any) => t.id === createdTagId);
-    if (testTag) { // If it exists, check its properties
-        expect(testTag.name).toBeDefined();
-    } else { // Otherwise, ensure there's at least one tag created by some test.
-        expect(tags.length).toBeGreaterThan(0);
-    }
+    expect(tags.length).toBeGreaterThan(0);
+    const myTag = tags.find((t: any) => t.name === tagName);
+    expect(myTag).toBeDefined();
   });
 
   test('[P1] should get a specific tag by ID', async ({ request }) => {
@@ -88,14 +88,22 @@ test.describe('API Tag Management', () => {
   });
 
   test('[P0] should update transaction with tags', async ({ request }) => {
+    // Create an account first
+    const accountResponse = await request.post('/accounts/', {
+      data: { name: 'Test Account', type: 'checking' }
+    });
+    expect(accountResponse.status()).toBe(201);
+    const account = await accountResponse.json();
+    const accountId = account.id;
+
     // Create a transaction first
     const transactionResponse = await request.post('/transactions/', {
-        data: {
-            amount: 100,
-            description: 'Test Transaction',
-            date: new Date().toISOString(),
-            account_id: 1 // Assuming account_id 1 exists for user
-        }
+      data: {
+        amount: 100,
+        description: 'Test Transaction',
+        date: new Date().toISOString(),
+        account_id: accountId
+      }
     });
     expect(transactionResponse.status()).toBe(201);
     const transaction = await transactionResponse.json();
@@ -111,7 +119,7 @@ test.describe('API Tag Management', () => {
 
     // Update transaction with tags
     const updateResponse = await request.patch(`/transactions/${transactionId}`, {
-        data: { tag_ids: [tag1.id, tag2.id] }
+      data: { tag_ids: [tag1.id, tag2.id] }
     });
     expect(updateResponse.status()).toBe(200);
     const updatedTransaction = await updateResponse.json();

@@ -1,0 +1,19 @@
+[Unit]
+Description=Resume-Matcher Application
+After=network.target
+
+[Service]
+Type=simple
+User=danielaroko
+WorkingDirectory=/home/danielaroko/applications/Resume-Matcher
+Environment="PATH=/opt/conda/envs/python/bin:/home/danielaroko/applications/Resume-Matcher/apps/backend/.venv/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin"
+Environment="NODE_ENV=development"
+ExecStart=/usr/bin/npm run dev
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=resume-matcher
+
+[Install]
+WantedBy=multi-user.target

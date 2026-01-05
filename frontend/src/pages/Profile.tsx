@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getUser, updateUser } from '../services/api';
-import { User } from '../services/api'; 
+import { type User } from '../services/api';
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -45,9 +45,9 @@ const Profile = () => {
 
   if (loading) {
     return (
-        <div className="flex justify-center mt-20">
-            <span className="material-symbols-outlined animate-spin text-primary text-4xl">sync</span>
-        </div>
+      <div className="flex justify-center mt-20">
+        <span className="material-symbols-outlined animate-spin text-primary text-4xl">sync</span>
+      </div>
     );
   }
 
@@ -61,34 +61,42 @@ const Profile = () => {
 
       <div className="bg-white dark:bg-slate-800/20 border border-slate-200/80 dark:border-white/10 p-6 rounded-xl flex flex-col gap-6">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Profile Information</h2>
-        
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col flex-1">
             <p className="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Email</p>
-            <input 
-              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 h-12 px-4 text-base font-normal leading-normal" 
+            <input
+              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 h-12 px-4 text-base font-normal leading-normal"
               type="text"
               value={user.email}
               disabled // Email is not editable
+              data-testid="profile-email-input"
             />
           </label>
 
           <label className="flex flex-col flex-1">
             <p className="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Full Name</p>
-            <input 
-              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 focus:border-primary h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal" 
+              <input
+              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 focus:border-primary min-h-[44px] h-11 md:h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal"
               type="text"
+              inputMode="text"
+              autoCapitalize="words"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Your full name"
+              data-testid="profile-name-input"
+              name="full_name"
             />
           </label>
 
           <label className="flex flex-col flex-1">
             <p className="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Avatar URL</p>
-            <input 
-              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 focus:border-primary h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal" 
-              type="text"
+              <input
+              className="form-input flex w-full min-w-0 flex-1 rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 focus:border-primary min-h-[44px] h-11 md:h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal"
+              type="url"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
               placeholder="URL to your avatar image"
@@ -96,15 +104,32 @@ const Profile = () => {
           </label>
 
           <div className="flex justify-end mt-4">
-            <button 
+            <button
               type="submit"
               disabled={saving}
-              className="flex items-center justify-center rounded-lg h-10 bg-primary text-white text-sm font-semibold px-5 hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center rounded-lg min-h-[44px] h-11 bg-primary text-white text-sm font-semibold px-5 hover:bg-primary/90 transition-colors disabled:opacity-50 active:scale-95"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800/20 border border-red-200/50 dark:border-red-500/10 p-6 rounded-xl flex flex-col gap-6">
+        <div>
+          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400">Account Actions</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Sign out of your account on this device.</p>
+        </div>
+
+        <div className="flex">
+          <a
+            href="/login" // Simple link to login for now, assuming it clears session or user can re-login
+            className="flex items-center gap-2 justify-center rounded-lg h-12 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm font-bold px-6 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all border border-red-100 dark:border-red-500/20"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            <span>Sign Out</span>
+          </a>
+        </div>
       </div>
     </div>
   );

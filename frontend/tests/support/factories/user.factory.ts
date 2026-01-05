@@ -9,7 +9,7 @@ export const createUser = async () => {
     const google_sub = faker.string.uuid();
 
     // Dev signup endpoint
-    await axios.post(`${API_URL}/auth/dev/signup`, { email, password, google_sub });
+    await axios.post(`${API_URL}/dev/signup`, { email, password, google_sub });
 
     // No need to explicitly login via API here for session in Playwright API tests,
     // as the current_user is mocked by get_current_user in backend dependencies.

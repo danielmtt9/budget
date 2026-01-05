@@ -13,19 +13,17 @@ export const test = base.extend<{ setupUserAndLogin: void }>({
     const password = faker.internet.password();
     const google_sub = faker.string.uuid();
 
-    await axios.post(`${API_URL}/auth/dev/signup`, { email, password, google_sub });
+    await axios.post(`${API_URL}/dev/signup`, { email, password, google_sub });
 
-    // 2. Log in through UI using the provided 'page'
-    await page.goto('/login');
-    await page.fill('input[name="email"]', email);
-    await page.fill('input[name="password"]', password);
-    await page.click('button[type="submit"]');
+    // 2. Log in through UI using the Dev Login endpoint directly
+    // This sets the session cookie and redirects to frontend
+    await page.goto(`${API_URL}/dev/login?email=${email}`);
 
-    // Wait for navigation to dashboard/transactions
-    await page.waitForURL('/transactions'); 
+    // Wait for navigation to dashboard (root)
+    await page.waitForURL('/');
 
     // Use: this tells Playwright to run the actual test function now
     // and provide it with the 'page' object which is now logged in.
-    await use(); 
-  }, { scope: 'each', auto: true }], // 'auto: true' means this fixture runs automatically for tests.
+    await use();
+  }, { auto: true }], // 'auto: true' means this fixture runs automatically for tests.
 });
